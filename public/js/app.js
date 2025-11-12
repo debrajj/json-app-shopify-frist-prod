@@ -1,5 +1,14 @@
 const API_BASE = '/api';
-const socket = io();
+let socket;
+
+// Initialize socket.io if available
+if (typeof io !== 'undefined') {
+  try {
+    socket = io();
+  } catch (e) {
+    console.log('Socket.io not available:', e);
+  }
+}
 
 // Load data for each section
 async function loadData(section) {
@@ -449,18 +458,20 @@ function closeModal() {
 }
 
 // Socket.io real-time updates
-socket.on('collection:created', () => loadData('collections'));
-socket.on('collection:updated', () => loadData('collections'));
-socket.on('collection:deleted', () => loadData('collections'));
-socket.on('collectionGroup:created', () => loadData('collection-groups'));
-socket.on('collectionGroup:updated', () => loadData('collection-groups'));
-socket.on('collectionGroup:deleted', () => loadData('collection-groups'));
-socket.on('collectionList:created', () => loadData('collection-lists'));
-socket.on('collectionList:updated', () => loadData('collection-lists'));
-socket.on('collectionList:deleted', () => loadData('collection-lists'));
-socket.on('collectionType:created', () => loadData('collection-types'));
-socket.on('collectionType:updated', () => loadData('collection-types'));
-socket.on('collectionType:deleted', () => loadData('collection-types'));
+if (socket) {
+  socket.on('collection:created', () => loadData('collections'));
+  socket.on('collection:updated', () => loadData('collections'));
+  socket.on('collection:deleted', () => loadData('collections'));
+  socket.on('collectionGroup:created', () => loadData('collection-groups'));
+  socket.on('collectionGroup:updated', () => loadData('collection-groups'));
+  socket.on('collectionGroup:deleted', () => loadData('collection-groups'));
+  socket.on('collectionList:created', () => loadData('collection-lists'));
+  socket.on('collectionList:updated', () => loadData('collection-lists'));
+  socket.on('collectionList:deleted', () => loadData('collection-lists'));
+  socket.on('collectionType:created', () => loadData('collection-types'));
+  socket.on('collectionType:updated', () => loadData('collection-types'));
+  socket.on('collectionType:deleted', () => loadData('collection-types'));
+}
 
 // Initial load
 loadData('collections');

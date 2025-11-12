@@ -35,8 +35,14 @@
     }
     const currentSection = 'collection-lists';
   </script>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js" onerror="console.log('Socket.io not loaded')"></script>
   <script src="/js/app.js"></script>
-  <script>loadData('collection-lists');</script>
+  <script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => loadData('collection-lists'));
+    } else {
+      loadData('collection-lists');
+    }
+  </script>
 </body>
 </html>
