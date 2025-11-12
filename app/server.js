@@ -87,13 +87,18 @@ async function startServer() {
     // Upload route
     app.use('/api/upload', upload.single('image'), uploadRoute);
 
-    httpServer.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`MongoDB connected`);
-    });
+    // Only start server if not in Vercel environment
+    if (process.env.VERCEL !== '1') {
+      httpServer.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log(`MongoDB connected`);
+      });
+    }
   } catch (err) {
     console.error('Failed to start server:', err);
-    process.exit(1);
+    if (process.env.VERCEL !== '1') {
+      process.exit(1);
+    }
   }
 }
 
