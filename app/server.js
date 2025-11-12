@@ -18,7 +18,11 @@ const io = new Server(httpServer, {
 
 setIO(io);
 
-const upload = multer({ dest: 'public/assets/' });
+// Use memory storage for Vercel (serverless environment)
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 app.use(cors({
   origin: process.env.ADMIN_PANEL_URL || '*'
