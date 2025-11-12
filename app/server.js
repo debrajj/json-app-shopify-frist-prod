@@ -28,7 +28,13 @@ app.use(cors({
   origin: process.env.ADMIN_PANEL_URL || '*'
 }));
 app.use(express.json());
-app.use(express.static('public'));
+
+// Serve static files with absolute path for Vercel
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+app.use(express.static(join(__dirname, '../public')));
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -86,6 +92,23 @@ async function startServer() {
 
     // Upload route
     app.use('/api/upload', upload.single('image'), uploadRoute);
+
+    // Serve HTML pages
+    app.get('/', (req, res) => {
+      res.sendFile(join(__dirname, '../public/index.html'));
+    });
+    
+    app.get('/collection-groups.html', (req, res) => {
+      res.sendFile(join(__dirname, '../public/collection-groups.html'));
+    });
+    
+    app.get('/collection-lists.html', (req, res) => {
+      res.sendFile(join(__dirname, '../public/collection-lists.html'));
+    });
+    
+    app.get('/collection-types.html', (req, res) => {
+      res.sendFile(join(__dirname, '../public/collection-types.html'));
+    });
 
     // Only start server if not in Vercel environment
     if (process.env.VERCEL !== '1') {
