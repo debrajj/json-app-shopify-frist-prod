@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection Manager - Shopify Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>Collection Manager</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#collections" class="nav-item active" data-section="collections">
+          <span class="icon">📦</span>
+          <span>Collections</span>
+        </a>
+        <a href="#collection-groups" class="nav-item" data-section="collection-groups">
+          <span class="icon">📁</span>
+          <span>Collection Groups</span>
+        </a>
+        <a href="#collection-lists" class="nav-item" data-section="collection-lists">
+          <span class="icon">📋</span>
+          <span>Collection Lists</span>
+        </a>
+        <a href="#collection-types" class="nav-item" data-section="collection-types">
+          <span class="icon">🏷️</span>
+          <span>Collection Types</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div id="collections" class="section active">
+        <div class="section-header">
+          <h2>Collections</h2>
+          <button class="btn btn-primary" onclick="createNew('collection')">+ Create Collection</button>
+        </div>
+        <div id="collections-list" class="items-grid"></div>
+      </div>
+
+      <div id="collection-groups" class="section">
+        <div class="section-header">
+          <h2>Collection Groups</h2>
+          <button class="btn btn-primary" onclick="createNew('collection-group')">+ Create Group</button>
+        </div>
+        <div id="collection-groups-list" class="items-grid"></div>
+      </div>
+
+      <div id="collection-lists" class="section">
+        <div class="section-header">
+          <h2>Collection Lists</h2>
+          <button class="btn btn-primary" onclick="createNew('collection-list')">+ Create List</button>
+        </div>
+        <div id="collection-lists-list" class="items-grid"></div>
+      </div>
+
+      <div id="collection-types" class="section">
+        <div class="section-header">
+          <h2>Collection Types</h2>
+          <button class="btn btn-primary" onclick="createNew('collection-type')">+ Create Type</button>
+        </div>
+        <div id="collection-types-list" class="items-grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
