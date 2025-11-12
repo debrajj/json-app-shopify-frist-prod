@@ -4,20 +4,40 @@
     {
       "src": "app/server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "app/server.js"
+      "dest": "/app/server.js"
     },
     {
       "src": "/socket.io/(.*)",
-      "dest": "app/server.js"
+      "dest": "/app/server.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "app/server.js"
+      "src": "/(.*\\.(css|js|html|png|jpg|jpeg|gif|svg|ico))",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/collection-groups.html",
+      "dest": "/public/collection-groups.html"
+    },
+    {
+      "src": "/collection-lists.html",
+      "dest": "/public/collection-lists.html"
+    },
+    {
+      "src": "/collection-types.html",
+      "dest": "/public/collection-types.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
     }
   ]
 }
