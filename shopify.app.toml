@@ -22,3 +22,19 @@ embedded = false
 [build]
 automatically_update_urls_on_dev = true
 dev_store_url = "testing-appx.myshopify.com"
+
+[[app_navigation.links]]
+label = "Collections"
+destination = "/"
+
+[[app_navigation.links]]
+label = "Collection Groups"
+destination = "/collection-groups.html"
+
+[[app_navigation.links]]
+label = "Collection Lists"
+destination = "/collection-lists.html"
+
+[[app_navigation.links]]
+label = "Collection Types"
+destination = "/collection-types.html"
