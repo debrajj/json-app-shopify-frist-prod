@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node app/server.js",
-    "start": "node app/server.js"
+    "start": "node app/server.js",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
     "@shopify/app-bridge": "^3.7.10",
