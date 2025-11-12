@@ -26,6 +26,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static('public'));
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Socket.io for real-time updates
 io.on('connection', (socket) => {
   console.log('Client connected');
@@ -55,24 +61,24 @@ async function startServer() {
     const uploadRoute = (await import('./routes/upload.js')).default;
 
     // Collection routes
-    app.use('/api/collection/new', collectionNewRoute);
-    app.use('/api/collection/:id', collectionEditRoute);
-    app.use('/api/collection', collectionRoutes);
+    app.use('/api/collections/new', collectionNewRoute);
+    app.use('/api/collections/:id', collectionEditRoute);
+    app.use('/api/collections', collectionRoutes);
 
     // Collection Group routes
-    app.use('/api/collection-group/new', collectionGroupNewRoute);
-    app.use('/api/collection-group/:id', collectionGroupEditRoute);
-    app.use('/api/collection-group', collectionGroupRoutes);
+    app.use('/api/collection-groups/new', collectionGroupNewRoute);
+    app.use('/api/collection-groups/:id', collectionGroupEditRoute);
+    app.use('/api/collection-groups', collectionGroupRoutes);
 
     // Collection List routes
-    app.use('/api/collection-list/new', collectionListNewRoute);
-    app.use('/api/collection-list/:id', collectionListEditRoute);
-    app.use('/api/collection-list', collectionListRoutes);
+    app.use('/api/collection-lists/new', collectionListNewRoute);
+    app.use('/api/collection-lists/:id', collectionListEditRoute);
+    app.use('/api/collection-lists', collectionListRoutes);
 
     // Collection Type routes
-    app.use('/api/collection-type/new', collectionTypeNewRoute);
-    app.use('/api/collection-type/:id', collectionTypeEditRoute);
-    app.use('/api/collection-type', collectionTypeRoutes);
+    app.use('/api/collection-types/new', collectionTypeNewRoute);
+    app.use('/api/collection-types/:id', collectionTypeEditRoute);
+    app.use('/api/collection-types', collectionTypeRoutes);
 
     // Upload route
     app.use('/api/upload', upload.single('image'), uploadRoute);

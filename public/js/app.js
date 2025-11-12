@@ -1,31 +1,24 @@
 const API_BASE = '/api';
 const socket = io();
 
-// Navigation
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    const section = item.dataset.section;
-    
-    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-    
-    item.classList.add('active');
-    document.getElementById(section).classList.add('active');
-    
-    loadData(section);
-  });
-});
-
 // Load data for each section
 async function loadData(section) {
-  const endpoint = section.replace(/-/g, '-');
   try {
-    const response = await fetch(`${API_BASE}/${endpoint}`);
+    const response = await fetch(`${API_BASE}/${section}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to load data');
+    }
+    
     const data = await response.json();
+    console.log(`Loaded ${section}:`, data);
     renderItems(section, data);
   } catch (error) {
     console.error('Error loading data:', error);
+    const container = document.getElementById(`${section}-list`);
+    if (container) {
+      container.innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
+    }
   }
 }
 
@@ -227,31 +220,207 @@ function createNew(type) {
     const data = Object.fromEntries(formData);
     
     try {
-      await fetch(`${API_BASE}/${type}/new`, {
+      const response = await fetch(`${API_BASE}/${type}s/new`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create item');
+      }
+      
+      const result = await response.json();
+      console.log('Created:', result);
       closeModal();
-      loadData(type + 's');
+      
+      // Reload the correct section
+      const section = type === 'collection' ? 'collections' : 
+                     type === 'collection-group' ? 'collection-groups' :
+                     type === 'collection-list' ? 'collection-lists' :
+                     'collection-types';
+      loadData(section);
     } catch (error) {
       console.error('Error creating item:', error);
-      alert('Error creating item');
+      alert('Error creating item: ' + error.message);
     }
   });
 }
 
 // Edit item
 async function editItem(section, id) {
-  const endpoint = section.replace(/-/g, '-');
   try {
-    const response = await fetch(`${API_BASE}/${endpoint}/${id}`);
+    const response = await fetch(`${API_BASE}/${section}/${id}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to load item');
+    }
+    
     const item = await response.json();
     
-    // Similar to createNew but with pre-filled data
-    alert('Edit functionality - populate form with: ' + JSON.stringify(item));
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    
+    const type = section.replace('collections', 'collection')
+                       .replace('collection-groups', 'collection-group')
+                       .replace('collection-lists', 'collection-list')
+                       .replace('collection-types', 'collection-type');
+    
+    let formFields = '';
+    
+    if (section === 'collections') {
+      formFields = `
+        <h2>Edit Collection</h2>
+        <form id="edit-form">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" value="${item.name || ''}" required>
+          </div>
+          <div class="form-group">
+            <label>Link</label>
+            <input type="text" name="link" value="${item.link || ''}">
+          </div>
+          <div class="form-group">
+            <label>Collection Type</label>
+            <input type="text" name="collection_type" value="${item.collection_type || ''}">
+          </div>
+          <div class="form-group">
+            <label>Shopify ID</label>
+            <input type="text" name="shopifyId" value="${item.shopifyId || ''}">
+          </div>
+          <div class="form-group">
+            <label>Image URL</label>
+            <input type="text" name="image" value="${item.image || ''}">
+          </div>
+          <div class="form-group">
+            <label>Style</label>
+            <input type="text" name="style" value="${item.style || ''}">
+          </div>
+          <div class="form-group">
+            <label>Column</label>
+            <input type="number" name="column" value="${item.column || 1}">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      `;
+    } else if (section === 'collection-groups') {
+      formFields = `
+        <h2>Edit Collection Group</h2>
+        <form id="edit-form">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" value="${item.name || ''}" required>
+          </div>
+          <div class="form-group">
+            <label>Reference</label>
+            <input type="text" name="reference" value="${item.reference || ''}">
+          </div>
+          <div class="form-group">
+            <label>Style</label>
+            <input type="text" name="style" value="${item.style || ''}">
+          </div>
+          <div class="form-group">
+            <label>Background Image URL</label>
+            <input type="text" name="background_image" value="${item.background_image || ''}">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      `;
+    } else if (section === 'collection-lists') {
+      formFields = `
+        <h2>Edit Collection List</h2>
+        <form id="edit-form">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" value="${item.name || ''}" required>
+          </div>
+          <div class="form-group">
+            <label>Reference</label>
+            <input type="text" name="reference" value="${item.reference || ''}">
+          </div>
+          <div class="form-group">
+            <label>Link</label>
+            <input type="text" name="link" value="${item.link || ''}">
+          </div>
+          <div class="form-group">
+            <label>Shopify ID</label>
+            <input type="text" name="shopifyId" value="${item.shopifyId || ''}">
+          </div>
+          <div class="form-group">
+            <label>Text 1</label>
+            <input type="text" name="text_1" value="${item.text_1 || ''}">
+          </div>
+          <div class="form-group">
+            <label>Text 2</label>
+            <input type="text" name="text_2" value="${item.text_2 || ''}">
+          </div>
+          <div class="form-group">
+            <label>Text 3</label>
+            <input type="text" name="text_3" value="${item.text_3 || ''}">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      `;
+    } else if (section === 'collection-types') {
+      formFields = `
+        <h2>Edit Collection Type</h2>
+        <form id="edit-form">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" value="${item.name || ''}" required>
+          </div>
+          <div class="form-group">
+            <label>Identifier</label>
+            <input type="text" name="identifier" value="${item.identifier || ''}" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      `;
+    }
+    
+    modalBody.innerHTML = formFields;
+    modal.classList.add('active');
+    
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      try {
+        const updateResponse = await fetch(`${API_BASE}/${section}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (!updateResponse.ok) {
+          throw new Error('Failed to update item');
+        }
+        
+        const result = await updateResponse.json();
+        console.log('Updated:', result);
+        closeModal();
+        loadData(section);
+      } catch (error) {
+        console.error('Error updating item:', error);
+        alert('Error updating item: ' + error.message);
+      }
+    });
   } catch (error) {
     console.error('Error loading item:', error);
+    alert('Error loading item: ' + error.message);
   }
 }
 
@@ -259,13 +428,18 @@ async function editItem(section, id) {
 async function deleteItem(section, id) {
   if (!confirm('Are you sure you want to delete this item?')) return;
   
-  const endpoint = section.replace(/-/g, '-');
   try {
-    await fetch(`${API_BASE}/${endpoint}/${id}`, { method: 'DELETE' });
+    const response = await fetch(`${API_BASE}/${section}/${id}`, { method: 'DELETE' });
+    
+    if (!response.ok) {
+      throw new Error('Failed to delete item');
+    }
+    
+    console.log('Deleted item:', id);
     loadData(section);
   } catch (error) {
     console.error('Error deleting item:', error);
-    alert('Error deleting item');
+    alert('Error deleting item: ' + error.message);
   }
 }
 

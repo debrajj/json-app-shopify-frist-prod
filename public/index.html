@@ -3,68 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Collection Manager - Shopify Admin</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Collection Manager</title>
+  <link rel="stylesheet" href="https://unpkg.com/@shopify/polaris@12.0.0/build/esm/styles.css">
+  <script src="https://unpkg.com/@shopify/app-bridge@3"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+    }
+    .Polaris-Page {
+      padding: 2rem;
+    }
+    .Polaris-Tabs__Tab {
+      cursor: pointer;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .item-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      background: white;
+    }
+    .item-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: #008060;
+      color: white;
+    }
+    .btn-secondary {
+      background: #f1f1f1;
+      color: #333;
+    }
+    .btn-danger {
+      background: #d72c0d;
+      color: white;
+    }
+    .close {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+  </style>
 </head>
 <body>
-  <div class="app-container">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <h1>Collection Manager</h1>
-      </div>
-      <nav class="sidebar-nav">
-        <a href="#collections" class="nav-item active" data-section="collections">
-          <span class="icon">📦</span>
-          <span>Collections</span>
-        </a>
-        <a href="#collection-groups" class="nav-item" data-section="collection-groups">
-          <span class="icon">📁</span>
-          <span>Collection Groups</span>
-        </a>
-        <a href="#collection-lists" class="nav-item" data-section="collection-lists">
-          <span class="icon">📋</span>
-          <span>Collection Lists</span>
-        </a>
-        <a href="#collection-types" class="nav-item" data-section="collection-types">
-          <span class="icon">🏷️</span>
-          <span>Collection Types</span>
-        </a>
-      </nav>
-    </aside>
+  <div class="Polaris-Page">
+    <div class="Polaris-Page-Header">
+      <h1 class="Polaris-Header-Title">Collection Manager</h1>
+    </div>
+    
+    <div class="Polaris-Tabs">
+      <ul class="Polaris-Tabs__TabContainer">
+        <li class="Polaris-Tabs__Tab Polaris-Tabs__Tab--selected" data-section="collections" onclick="switchTab('collections')">
+          <button class="Polaris-Tabs__Title">Collections</button>
+        </li>
+        <li class="Polaris-Tabs__Tab" data-section="collection-groups" onclick="switchTab('collection-groups')">
+          <button class="Polaris-Tabs__Title">Collection Groups</button>
+        </li>
+        <li class="Polaris-Tabs__Tab" data-section="collection-lists" onclick="switchTab('collection-lists')">
+          <button class="Polaris-Tabs__Title">Collection Lists</button>
+        </li>
+        <li class="Polaris-Tabs__Tab" data-section="collection-types" onclick="switchTab('collection-types')">
+          <button class="Polaris-Tabs__Title">Collection Types</button>
+        </li>
+      </ul>
+    </div>
 
-    <main class="main-content">
-      <div id="collections" class="section active">
-        <div class="section-header">
-          <h2>Collections</h2>
-          <button class="btn btn-primary" onclick="createNew('collection')">+ Create Collection</button>
-        </div>
-        <div id="collections-list" class="items-grid"></div>
+    <div id="collections" class="section active">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+        <h2>Collections</h2>
+        <button class="btn btn-primary" onclick="createNew('collection')">Create Collection</button>
       </div>
+      <div id="collections-list" class="items-grid"></div>
+    </div>
 
-      <div id="collection-groups" class="section">
-        <div class="section-header">
-          <h2>Collection Groups</h2>
-          <button class="btn btn-primary" onclick="createNew('collection-group')">+ Create Group</button>
-        </div>
-        <div id="collection-groups-list" class="items-grid"></div>
+    <div id="collection-groups" class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+        <h2>Collection Groups</h2>
+        <button class="btn btn-primary" onclick="createNew('collection-group')">Create Group</button>
       </div>
+      <div id="collection-groups-list" class="items-grid"></div>
+    </div>
 
-      <div id="collection-lists" class="section">
-        <div class="section-header">
-          <h2>Collection Lists</h2>
-          <button class="btn btn-primary" onclick="createNew('collection-list')">+ Create List</button>
-        </div>
-        <div id="collection-lists-list" class="items-grid"></div>
+    <div id="collection-lists" class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+        <h2>Collection Lists</h2>
+        <button class="btn btn-primary" onclick="createNew('collection-list')">Create List</button>
       </div>
+      <div id="collection-lists-list" class="items-grid"></div>
+    </div>
 
-      <div id="collection-types" class="section">
-        <div class="section-header">
-          <h2>Collection Types</h2>
-          <button class="btn btn-primary" onclick="createNew('collection-type')">+ Create Type</button>
-        </div>
-        <div id="collection-types-list" class="items-grid"></div>
+    <div id="collection-types" class="section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0;">
+        <h2>Collection Types</h2>
+        <button class="btn btn-primary" onclick="createNew('collection-type')">Create Type</button>
       </div>
-    </main>
+      <div id="collection-types-list" class="items-grid"></div>
+    </div>
   </div>
 
   <div id="modal" class="modal">
@@ -74,6 +186,32 @@
     </div>
   </div>
 
+  <script>
+    // Initialize Shopify App Bridge
+    const apiKey = '6d5593dbc8c7a2c4691d0a7b6ea29a18';
+    const host = new URLSearchParams(window.location.search).get('host');
+    
+    if (host && apiKey) {
+      const app = window['app-bridge'].createApp({
+        apiKey: apiKey,
+        host: host,
+      });
+    }
+
+    function switchTab(section) {
+      document.querySelectorAll('.Polaris-Tabs__Tab').forEach(tab => {
+        tab.classList.remove('Polaris-Tabs__Tab--selected');
+      });
+      document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.remove('active');
+      });
+      
+      event.target.closest('.Polaris-Tabs__Tab').classList.add('Polaris-Tabs__Tab--selected');
+      document.getElementById(section).classList.add('active');
+      
+      loadData(section);
+    }
+  </script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/app.js"></script>
 </body>
