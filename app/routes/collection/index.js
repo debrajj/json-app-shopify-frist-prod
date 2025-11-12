@@ -6,10 +6,13 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
+    console.log('Fetching collections...');
     const collections = await getAllCollections();
+    console.log(`Found ${collections.length} collections`);
     res.json(collections);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error fetching collections:', error);
+    res.status(500).json({ error: error.message, stack: error.stack });
   }
 });
 
