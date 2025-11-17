@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRM - Collections</title>
   <link rel="stylesheet" href="https://unpkg.com/@shopify/polaris@12.0.0/build/esm/styles.css">
-  <script src="https://unpkg.com/@shopify/app-bridge@4"></script>
+  <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
   <link rel="stylesheet" href="/css/style.css">
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; display: flex; }
@@ -82,47 +82,20 @@
     
     if (host && apiKey) {
       try {
-        // Create App Bridge instance
-        const AppBridge = window['app-bridge'];
-        const app = AppBridge.createApp({ 
-          apiKey: apiKey, 
-          host: host 
-        });
-        
-        console.log('✅ App Bridge initialized successfully');
-        
-        // Create Navigation Menu in Shopify Admin sidebar
-        if (AppBridge.actions && AppBridge.actions.NavigationMenu) {
-          const NavigationMenu = AppBridge.actions.NavigationMenu;
-          const navigationMenu = NavigationMenu.create(app, {
-            items: [
-              {
-                label: 'Collections',
-                destination: '/collections',
-              },
-              {
-                label: 'Collection Groups',
-                destination: '/collection-groups',
-              },
-              {
-                label: 'Collection Lists',
-                destination: '/collection-lists',
-              },
-              {
-                label: 'Collection Types',
-                destination: '/collection-types',
-              },
-            ],
+        // Create App Bridge instance using global AppBridge
+        if (window.AppBridge) {
+          const app = window.AppBridge.createApp({ 
+            apiKey: apiKey, 
+            host: host 
           });
-          console.log('✅ Shopify Admin navigation menu created');
+          console.log('✅ App Bridge initialized successfully');
+          
+          if (embedded === '1') {
+            console.log('✅ App is properly embedded in Shopify Admin');
+            document.body.classList.add('shopify-embedded');
+          }
         } else {
-          console.log('⚠️ NavigationMenu action not available in this App Bridge version');
-        }
-        
-        // Add visual indicator
-        if (embedded === '1') {
-          console.log('✅ App is properly embedded in Shopify Admin');
-          document.body.classList.add('shopify-embedded');
+          console.log('⚠️ App Bridge not loaded');
         }
       } catch (e) {
         console.log('❌ App Bridge error:', e);
