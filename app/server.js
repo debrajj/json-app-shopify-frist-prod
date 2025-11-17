@@ -50,91 +50,88 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 4000;
 
-// Initialize routes after io is set
+// Import routes
+import collectionRoutes from './routes/collection/index.js';
+import collectionNewRoute from './routes/collection/new.js';
+import collectionEditRoute from './routes/collection/[id].js';
+import collectionGroupRoutes from './routes/collection-group/index.js';
+import collectionGroupNewRoute from './routes/collection-group/new.js';
+import collectionGroupEditRoute from './routes/collection-group/[id].js';
+import collectionListRoutes from './routes/collection-list/index.js';
+import collectionListNewRoute from './routes/collection-list/new.js';
+import collectionListEditRoute from './routes/collection-list/[id].js';
+import collectionTypeRoutes from './routes/collection-type/index.js';
+import collectionTypeNewRoute from './routes/collection-type/new.js';
+import collectionTypeEditRoute from './routes/collection-type/[id].js';
+import uploadRoute from './routes/upload.js';
+
+// Collection routes
+app.use('/api/collections/new', collectionNewRoute);
+app.use('/api/collections/:id', collectionEditRoute);
+app.use('/api/collections', collectionRoutes);
+
+// Collection Group routes
+app.use('/api/collection-groups/new', collectionGroupNewRoute);
+app.use('/api/collection-groups/:id', collectionGroupEditRoute);
+app.use('/api/collection-groups', collectionGroupRoutes);
+
+// Collection List routes
+app.use('/api/collection-lists/new', collectionListNewRoute);
+app.use('/api/collection-lists/:id', collectionListEditRoute);
+app.use('/api/collection-lists', collectionListRoutes);
+
+// Collection Type routes
+app.use('/api/collection-types/new', collectionTypeNewRoute);
+app.use('/api/collection-types/:id', collectionTypeEditRoute);
+app.use('/api/collection-types', collectionTypeRoutes);
+
+// Upload route
+app.use('/api/upload', upload.single('image'), uploadRoute);
+
+// Serve HTML pages - single app with navigation
+app.get('/', (req, res) => {
+  res.sendFile(join(__dirname, '../public/app.html'));
+});
+
+app.get('/collections', (req, res) => {
+  res.sendFile(join(__dirname, '../public/app.html'));
+});
+
+app.get('/collection-groups', (req, res) => {
+  res.sendFile(join(__dirname, '../public/app.html'));
+});
+
+app.get('/collection-lists', (req, res) => {
+  res.sendFile(join(__dirname, '../public/app.html'));
+});
+
+app.get('/collection-types', (req, res) => {
+  res.sendFile(join(__dirname, '../public/app.html'));
+});
+
+// Top navigation pages
+app.get('/templates', (req, res) => {
+  res.sendFile(join(__dirname, '../public/templates.html'));
+});
+
+app.get('/settings', (req, res) => {
+  res.sendFile(join(__dirname, '../public/settings.html'));
+});
+
+// Initialize database and start server
 async function startServer() {
   try {
     await connectDB();
+    console.log('MongoDB connected');
     
-    // Import routes dynamically after io is initialized
-    const collectionRoutes = (await import('./routes/collection/index.js')).default;
-    const collectionNewRoute = (await import('./routes/collection/new.js')).default;
-    const collectionEditRoute = (await import('./routes/collection/[id].js')).default;
-    const collectionGroupRoutes = (await import('./routes/collection-group/index.js')).default;
-    const collectionGroupNewRoute = (await import('./routes/collection-group/new.js')).default;
-    const collectionGroupEditRoute = (await import('./routes/collection-group/[id].js')).default;
-    const collectionListRoutes = (await import('./routes/collection-list/index.js')).default;
-    const collectionListNewRoute = (await import('./routes/collection-list/new.js')).default;
-    const collectionListEditRoute = (await import('./routes/collection-list/[id].js')).default;
-    const collectionTypeRoutes = (await import('./routes/collection-type/index.js')).default;
-    const collectionTypeNewRoute = (await import('./routes/collection-type/new.js')).default;
-    const collectionTypeEditRoute = (await import('./routes/collection-type/[id].js')).default;
-    const uploadRoute = (await import('./routes/upload.js')).default;
-
-    // Collection routes
-    app.use('/api/collections/new', collectionNewRoute);
-    app.use('/api/collections/:id', collectionEditRoute);
-    app.use('/api/collections', collectionRoutes);
-
-    // Collection Group routes
-    app.use('/api/collection-groups/new', collectionGroupNewRoute);
-    app.use('/api/collection-groups/:id', collectionGroupEditRoute);
-    app.use('/api/collection-groups', collectionGroupRoutes);
-
-    // Collection List routes
-    app.use('/api/collection-lists/new', collectionListNewRoute);
-    app.use('/api/collection-lists/:id', collectionListEditRoute);
-    app.use('/api/collection-lists', collectionListRoutes);
-
-    // Collection Type routes
-    app.use('/api/collection-types/new', collectionTypeNewRoute);
-    app.use('/api/collection-types/:id', collectionTypeEditRoute);
-    app.use('/api/collection-types', collectionTypeRoutes);
-
-    // Upload route
-    app.use('/api/upload', upload.single('image'), uploadRoute);
-
-    // Serve HTML pages - single app with navigation
-    app.get('/', (req, res) => {
-      res.sendFile(join(__dirname, '../public/app.html'));
-    });
-    
-    app.get('/collections', (req, res) => {
-      res.sendFile(join(__dirname, '../public/app.html'));
-    });
-    
-    app.get('/collection-groups', (req, res) => {
-      res.sendFile(join(__dirname, '../public/app.html'));
-    });
-    
-    app.get('/collection-lists', (req, res) => {
-      res.sendFile(join(__dirname, '../public/app.html'));
-    });
-    
-    app.get('/collection-types', (req, res) => {
-      res.sendFile(join(__dirname, '../public/app.html'));
-    });
-
-    // Top navigation pages
-    app.get('/templates', (req, res) => {
-      res.sendFile(join(__dirname, '../public/templates.html'));
-    });
-    
-    app.get('/settings', (req, res) => {
-      res.sendFile(join(__dirname, '../public/settings.html'));
-    });
-
     // Only start server if not in Vercel environment
     if (process.env.VERCEL !== '1') {
       httpServer.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
-        console.log(`MongoDB connected`);
       });
     }
   } catch (err) {
-    console.error('Failed to start server:', err);
-    if (process.env.VERCEL !== '1') {
-      process.exit(1);
-    }
+    console.error('Failed to connect to MongoDB:', err);
   }
 }
 
