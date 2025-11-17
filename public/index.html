@@ -10,39 +10,13 @@
   <style>
     body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; display: flex; }
     
-    /* Sidebar Navigation */
+    /* Let Shopify handle ui-nav-menu styling - don't override */
     ui-nav-menu {
-      display: flex;
-      flex-direction: column;
-      width: 240px;
-      background: #f6f6f7;
-      border-right: 1px solid #e1e3e5;
-      padding: 20px 0;
-      height: 100vh;
-      position: fixed;
-      left: 0;
-      top: 0;
-    }
-    ui-nav-menu a {
-      padding: 12px 20px;
-      color: #202223;
-      text-decoration: none;
-      display: block;
-      transition: background 0.2s;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    ui-nav-menu a:hover {
-      background: #e4e5e7;
-    }
-    ui-nav-menu a[rel="home"] {
-      font-weight: 600;
-      margin-bottom: 8px;
+      /* Shopify will render this in their sidebar when embedded */
     }
     
     .app-container {
-      margin-left: 240px;
-      width: calc(100% - 240px);
+      width: 100%;
       height: 100vh;
       overflow-y: auto;
     }
@@ -109,13 +83,41 @@
     if (host && apiKey) {
       try {
         // Create App Bridge instance
-        const app = window['app-bridge'].createApp({ 
+        const AppBridge = window['app-bridge'];
+        const app = AppBridge.createApp({ 
           apiKey: apiKey, 
           host: host 
         });
         
         console.log('✅ App Bridge initialized successfully');
-        console.log('✅ ui-nav-menu will render in Shopify Admin sidebar');
+        
+        // Create Navigation Menu in Shopify Admin sidebar
+        if (AppBridge.actions && AppBridge.actions.NavigationMenu) {
+          const NavigationMenu = AppBridge.actions.NavigationMenu;
+          const navigationMenu = NavigationMenu.create(app, {
+            items: [
+              {
+                label: 'Collections',
+                destination: '/collections',
+              },
+              {
+                label: 'Collection Groups',
+                destination: '/collection-groups',
+              },
+              {
+                label: 'Collection Lists',
+                destination: '/collection-lists',
+              },
+              {
+                label: 'Collection Types',
+                destination: '/collection-types',
+              },
+            ],
+          });
+          console.log('✅ Shopify Admin navigation menu created');
+        } else {
+          console.log('⚠️ NavigationMenu action not available in this App Bridge version');
+        }
         
         // Add visual indicator
         if (embedded === '1') {
@@ -123,12 +125,10 @@
           document.body.classList.add('shopify-embedded');
         }
       } catch (e) {
-        console.log('❌ App Bridge not available (testing locally):', e);
+        console.log('❌ App Bridge error:', e);
       }
     } else {
       console.log('⚠️ Running in standalone mode');
-      console.log('⚠️ Open this app inside Shopify Admin to see sidebar navigation');
-      console.log('⚠️ Go to: https://testing-appx.myshopify.com/admin → Apps → Collection Manager');
     }
   </script>
   <script src="/js/navigation.js"></script>
