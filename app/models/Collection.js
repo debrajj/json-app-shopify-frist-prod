@@ -22,17 +22,17 @@ export const CollectionSchema = {
 };
 
 export async function getAllCollections() {
-  const db = getDB();
+  const db = await getDB();
   return await db.collection(COLLECTION_NAME).find({}).toArray();
 }
 
 export async function getCollectionById(id) {
-  const db = getDB();
+  const db = await getDB();
   return await db.collection(COLLECTION_NAME).findOne({ id: parseInt(id) });
 }
 
 export async function createCollection(data) {
-  const db = getDB();
+  const db = await getDB();
   const collections = await getAllCollections();
   const newId = collections.length > 0 ? Math.max(...collections.map(c => c.id)) + 1 : 1;
   
@@ -42,7 +42,7 @@ export async function createCollection(data) {
 }
 
 export async function updateCollection(id, data) {
-  const db = getDB();
+  const db = await getDB();
   await db.collection(COLLECTION_NAME).updateOne(
     { id: parseInt(id) },
     { $set: data }
@@ -51,6 +51,6 @@ export async function updateCollection(id, data) {
 }
 
 export async function deleteCollection(id) {
-  const db = getDB();
+  const db = await getDB();
   await db.collection(COLLECTION_NAME).deleteOne({ id: parseInt(id) });
 }
