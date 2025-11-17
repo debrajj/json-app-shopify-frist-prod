@@ -104,6 +104,7 @@
     // Initialize App Bridge for Shopify Admin
     const apiKey = '6d5593dbc8c7a2c4691d0a7b6ea29a18';
     const host = new URLSearchParams(window.location.search).get('host');
+    const embedded = new URLSearchParams(window.location.search).get('embedded');
     
     if (host && apiKey) {
       try {
@@ -113,15 +114,20 @@
           host: host 
         });
         
-        console.log('App Bridge initialized successfully');
+        console.log('✅ App Bridge initialized successfully');
+        console.log('✅ ui-nav-menu will render in Shopify Admin sidebar');
         
-        // The ui-nav-menu component will automatically connect to App Bridge
-        // and render navigation in Shopify Admin sidebar
+        // Add visual indicator
+        if (embedded === '1') {
+          console.log('✅ App is properly embedded in Shopify Admin');
+        }
       } catch (e) {
-        console.log('App Bridge not available (testing locally):', e);
+        console.log('❌ App Bridge not available (testing locally):', e);
       }
     } else {
-      console.log('Running in standalone mode (not embedded in Shopify)');
+      console.log('⚠️ Running in standalone mode');
+      console.log('⚠️ Open this app inside Shopify Admin to see sidebar navigation');
+      console.log('⚠️ Go to: https://testing-appx.myshopify.com/admin → Apps → Collection Manager');
     }
   </script>
   <script src="/socket.io/socket.io.js" onerror="console.log('Socket.io not loaded')"></script>
