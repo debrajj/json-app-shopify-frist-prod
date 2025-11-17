@@ -14,17 +14,17 @@ export const CollectionGroupSchema = {
 };
 
 export async function getAllCollectionGroups() {
-  const db = getDB();
+  const db = await getDB();
   return await db.collection(COLLECTION_NAME).find({}).toArray();
 }
 
 export async function getCollectionGroupById(id) {
-  const db = getDB();
+  const db = await getDB();
   return await db.collection(COLLECTION_NAME).findOne({ id: parseInt(id) });
 }
 
 export async function createCollectionGroup(data) {
-  const db = getDB();
+  const db = await getDB();
   const groups = await getAllCollectionGroups();
   const newId = groups.length > 0 ? Math.max(...groups.map(g => g.id)) + 1 : 1;
   
@@ -34,7 +34,7 @@ export async function createCollectionGroup(data) {
 }
 
 export async function updateCollectionGroup(id, data) {
-  const db = getDB();
+  const db = await getDB();
   await db.collection(COLLECTION_NAME).updateOne(
     { id: parseInt(id) },
     { $set: data }
@@ -43,6 +43,6 @@ export async function updateCollectionGroup(id, data) {
 }
 
 export async function deleteCollectionGroup(id) {
-  const db = getDB();
+  const db = await getDB();
   await db.collection(COLLECTION_NAME).deleteOne({ id: parseInt(id) });
 }
