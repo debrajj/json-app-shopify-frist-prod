@@ -25,16 +25,16 @@ dev_store_url = "testing-appx.myshopify.com"
 
 [[app_navigation.links]]
 label = "Collections"
-destination = "/"
+destination = "/collections"
 
 [[app_navigation.links]]
 label = "Collection Groups"
-destination = "/collection-groups.html"
+destination = "/collection-groups"
 
 [[app_navigation.links]]
 label = "Collection Lists"
-destination = "/collection-lists.html"
+destination = "/collection-lists"
 
 [[app_navigation.links]]
 label = "Collection Types"
-destination = "/collection-types.html"
+destination = "/collection-types"

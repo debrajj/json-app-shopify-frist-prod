@@ -93,21 +93,25 @@ async function startServer() {
     // Upload route
     app.use('/api/upload', upload.single('image'), uploadRoute);
 
-    // Serve HTML pages
+    // Serve HTML pages - single app with navigation
     app.get('/', (req, res) => {
-      res.sendFile(join(__dirname, '../public/index.html'));
+      res.sendFile(join(__dirname, '../public/app.html'));
     });
     
-    app.get('/collection-groups.html', (req, res) => {
-      res.sendFile(join(__dirname, '../public/collection-groups.html'));
+    app.get('/collections', (req, res) => {
+      res.sendFile(join(__dirname, '../public/app.html'));
     });
     
-    app.get('/collection-lists.html', (req, res) => {
-      res.sendFile(join(__dirname, '../public/collection-lists.html'));
+    app.get('/collection-groups', (req, res) => {
+      res.sendFile(join(__dirname, '../public/app.html'));
     });
     
-    app.get('/collection-types.html', (req, res) => {
-      res.sendFile(join(__dirname, '../public/collection-types.html'));
+    app.get('/collection-lists', (req, res) => {
+      res.sendFile(join(__dirname, '../public/app.html'));
+    });
+    
+    app.get('/collection-types', (req, res) => {
+      res.sendFile(join(__dirname, '../public/app.html'));
     });
 
     // Only start server if not in Vercel environment
