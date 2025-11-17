@@ -83,11 +83,39 @@
     if (host && apiKey) {
       try {
         // Create App Bridge instance
-        const app = window['app-bridge'].createApp({ 
+        const AppBridge = window['app-bridge'];
+        const app = AppBridge.createApp({ 
           apiKey: apiKey, 
           host: host 
         });
         console.log('✅ App Bridge initialized');
+        
+        // Create TitleBar with navigation buttons
+        const TitleBar = AppBridge.actions.TitleBar;
+        TitleBar.create(app, {
+          title: 'CRM',
+          buttons: {
+            primary: {
+              label: 'Collections',
+              onClick: () => { window.location.href = '/'; }
+            },
+            secondary: [
+              {
+                label: 'Collection Groups',
+                onClick: () => { window.location.href = '/collection-groups'; }
+              },
+              {
+                label: 'Collection Lists',
+                onClick: () => { window.location.href = '/collection-lists'; }
+              },
+              {
+                label: 'Collection Types',
+                onClick: () => { window.location.href = '/collection-types'; }
+              }
+            ]
+          }
+        });
+        console.log('✅ TitleBar navigation created');
         
         if (embedded === '1') {
           console.log('✅ Embedded in Shopify Admin');
