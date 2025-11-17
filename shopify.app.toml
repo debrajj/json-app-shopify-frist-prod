@@ -23,19 +23,5 @@ embedded = false
 automatically_update_urls_on_dev = true
 dev_store_url = "testing-appx.myshopify.com"
 
-[app_navigation]
-[[app_navigation.links]]
-label = "Collections"
-destination = "/collections"
-
-[[app_navigation.links]]
-label = "Collection Groups"
-destination = "/collection-groups"
-
-[[app_navigation.links]]
-label = "Collection Lists"
-destination = "/collection-lists"
-
-[[app_navigation.links]]
-label = "Collection Types"
-destination = "/collection-types"
+# Navigation is now handled by ui-nav-menu component in the app
+# Static app_navigation is deprecated as of December 2024

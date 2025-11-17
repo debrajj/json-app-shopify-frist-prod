@@ -161,7 +161,12 @@
     const apiKey = '6d5593dbc8c7a2c4691d0a7b6ea29a18';
     const host = new URLSearchParams(window.location.search).get('host');
     if (host && apiKey) {
-      const app = window['app-bridge'].createApp({ apiKey: apiKey, host: host });
+      try {
+        const app = window['app-bridge'].createApp({ apiKey: apiKey, host: host });
+        console.log('App Bridge initialized');
+      } catch (e) {
+        console.log('App Bridge not available:', e);
+      }
     }
 
     function saveSettings() {
