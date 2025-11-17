@@ -1,6 +1,6 @@
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "collection-manager"
+name = "CRM"
 client_id = "6d5593dbc8c7a2c4691d0a7b6ea29a18"
 application_url = "https://shopify-json-frist-mongodb.vercel.app"
 embedded = true
