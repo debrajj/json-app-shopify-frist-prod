@@ -8,9 +8,31 @@
   <script src="https://unpkg.com/@shopify/app-bridge@3"></script>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
-    ui-nav-menu { display: block; }
-    .content { padding: 40px; max-width: 800px; margin: 0 auto; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; display: flex; }
+    ui-nav-menu { 
+      display: flex;
+      flex-direction: column;
+      width: 240px;
+      background: #f6f6f7;
+      border-right: 1px solid #e1e3e5;
+      padding: 20px 0;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+    ui-nav-menu a {
+      padding: 12px 20px;
+      color: #202223;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    ui-nav-menu a:hover { background: #e4e5e7; }
+    ui-nav-menu a[rel="home"] { font-weight: 600; margin-bottom: 8px; }
+    .content { padding: 40px; max-width: 800px; margin: 0 auto; margin-left: 240px; }
     .page-title { font-size: 28px; margin-bottom: 24px; color: #202223; }
     .settings-section { background: white; border: 1px solid #e1e3e5; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
     .settings-section h2 { margin: 0 0 16px 0; font-size: 18px; color: #202223; }
