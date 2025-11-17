@@ -1,15 +1,5 @@
 const API_BASE = '/api';
-let socket;
 let currentSection = 'collections';
-
-// Initialize socket.io
-if (typeof io !== 'undefined') {
-  try {
-    socket = io();
-  } catch (e) {
-    console.log('Socket.io not available:', e);
-  }
-}
 
 // Section configuration
 const sections = {
@@ -281,22 +271,6 @@ async function deleteItem(section, id) {
 // Close modal
 function closeModal() {
   document.getElementById('modal').classList.remove('active');
-}
-
-// Socket.io real-time updates
-if (socket) {
-  socket.on('collection:created', () => { if (currentSection === 'collections') loadData('collections'); });
-  socket.on('collection:updated', () => { if (currentSection === 'collections') loadData('collections'); });
-  socket.on('collection:deleted', () => { if (currentSection === 'collections') loadData('collections'); });
-  socket.on('collectionGroup:created', () => { if (currentSection === 'collection-groups') loadData('collection-groups'); });
-  socket.on('collectionGroup:updated', () => { if (currentSection === 'collection-groups') loadData('collection-groups'); });
-  socket.on('collectionGroup:deleted', () => { if (currentSection === 'collection-groups') loadData('collection-groups'); });
-  socket.on('collectionList:created', () => { if (currentSection === 'collection-lists') loadData('collection-lists'); });
-  socket.on('collectionList:updated', () => { if (currentSection === 'collection-lists') loadData('collection-lists'); });
-  socket.on('collectionList:deleted', () => { if (currentSection === 'collection-lists') loadData('collection-lists'); });
-  socket.on('collectionType:created', () => { if (currentSection === 'collection-types') loadData('collection-types'); });
-  socket.on('collectionType:updated', () => { if (currentSection === 'collection-types') loadData('collection-types'); });
-  socket.on('collectionType:deleted', () => { if (currentSection === 'collection-types') loadData('collection-types'); });
 }
 
 // Initial load - detect section from URL

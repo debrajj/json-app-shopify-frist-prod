@@ -1,6 +1,5 @@
 import express from 'express';
 import { getAllCollectionLists, deleteCollectionList } from '../../models/CollectionList.js';
-import { getIO } from '../../utils/socket.js';
 
 const router = express.Router();
 
@@ -16,7 +15,6 @@ router.get('/', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await deleteCollectionList(req.params.id);
-    getIO().emit('collectionList:deleted', { id: req.params.id });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

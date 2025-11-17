@@ -1,6 +1,5 @@
 import express from 'express';
 import { getCollectionTypeById, updateCollectionType } from '../../models/CollectionType.js';
-import { getIO } from '../../utils/socket.js';
 
 const router = express.Router({ mergeParams: true });
 
@@ -19,7 +18,6 @@ router.get('/', async (req, res) => {
 router.put('/', async (req, res) => {
   try {
     const updated = await updateCollectionType(req.params.id, req.body);
-    getIO().emit('collectionType:updated', updated);
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: error.message });
