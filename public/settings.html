@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Collection Manager</title>
+  <link rel="stylesheet" href="https://unpkg.com/@shopify/polaris@12.0.0/build/esm/styles.css">
+  <script src="https://unpkg.com/@shopify/app-bridge@3"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
+    ui-nav-menu { display: block; }
+    .content { padding: 40px; max-width: 800px; margin: 0 auto; }
+    .page-title { font-size: 28px; margin-bottom: 24px; color: #202223; }
+    .settings-section { background: white; border: 1px solid #e1e3e5; border-radius: 8px; padding: 24px; margin-bottom: 20px; }
+    .settings-section h2 { margin: 0 0 16px 0; font-size: 18px; color: #202223; }
+    .settings-section p { margin: 0 0 20px 0; font-size: 14px; color: #6d7175; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: #202223; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #c9cccf; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+    .form-group input[type="checkbox"] { width: auto; margin-right: 8px; }
+    .checkbox-label { display: flex; align-items: center; font-weight: normal; }
+    .btn { padding: 10px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .btn-primary { background: #005bd3; color: white; }
+    .btn-primary:hover { background: #004a99; }
+    .btn-danger { background: #d72c0d; color: white; margin-left: 12px; }
+    .btn-danger:hover { background: #b92100; }
+    .success-message { background: #d1f7c4; color: #108043; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <ui-nav-menu>
+    <a href="/" rel="home">Collections</a>
+    <a href="/collection-groups">Collection Groups</a>
+    <a href="/collection-lists">Collection Lists</a>
+    <a href="/collection-types">Collection Types</a>
+  </ui-nav-menu>
+
+  <div class="content">
+    <h1 class="page-title">Settings</h1>
+    
+    <div id="success-message" class="success-message">Settings saved successfully!</div>
+
+    <div class="settings-section">
+      <h2>General Settings</h2>
+      <p>Configure general app settings and preferences.</p>
+      
+      <div class="form-group">
+        <label>App Name</label>
+        <input type="text" id="app-name" value="Collection Manager" placeholder="Enter app name">
+      </div>
+
+      <div class="form-group">
+        <label>Default Collection Style</label>
+        <select id="default-style">
+          <option value="grid">Grid</option>
+          <option value="list">List</option>
+          <option value="carousel">Carousel</option>
+          <option value="masonry">Masonry</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="auto-sync" checked>
+          Enable automatic sync with Shopify
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="real-time-updates" checked>
+          Enable real-time updates via Socket.io
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h2>Display Settings</h2>
+      <p>Customize how collections are displayed in your store.</p>
+      
+      <div class="form-group">
+        <label>Items Per Page</label>
+        <input type="number" id="items-per-page" value="12" min="1" max="100">
+      </div>
+
+      <div class="form-group">
+        <label>Default Column Count</label>
+        <select id="default-columns">
+          <option value="1">1 Column</option>
+          <option value="2">2 Columns</option>
+          <option value="3" selected>3 Columns</option>
+          <option value="4">4 Columns</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-images" checked>
+          Show collection images
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h2>API Configuration</h2>
+      <p>Configure API settings and connections.</p>
+      
+      <div class="form-group">
+        <label>Shopify Store Domain</label>
+        <input type="text" id="store-domain" value="testing-appx.myshopify.com" readonly>
+      </div>
+
+      <div class="form-group">
+        <label>API Version</label>
+        <input type="text" id="api-version" value="2024-01" readonly>
+      </div>
+
+      <div class="form-group">
+        <label>MongoDB Connection Status</label>
+        <input type="text" id="db-status" value="Connected" readonly style="color: #108043;">
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h2>Danger Zone</h2>
+      <p>Irreversible actions that affect your data.</p>
+      
+      <button class="btn btn-danger" onclick="clearCache()">Clear Cache</button>
+      <button class="btn btn-danger" onclick="resetSettings()">Reset to Defaults</button>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = '6d5593dbc8c7a2c4691d0a7b6ea29a18';
+    const host = new URLSearchParams(window.location.search).get('host');
+    if (host && apiKey) {
+      const app = window['app-bridge'].createApp({ apiKey: apiKey, host: host });
+    }
+
+    function saveSettings() {
+      const settings = {
+        appName: document.getElementById('app-name').value,
+        defaultStyle: document.getElementById('default-style').value,
+        autoSync: document.getElementById('auto-sync').checked,
+        realTimeUpdates: document.getElementById('real-time-updates').checked,
+        itemsPerPage: document.getElementById('items-per-page').value,
+        defaultColumns: document.getElementById('default-columns').value,
+        showImages: document.getElementById('show-images').checked
+      };
+
+      localStorage.setItem('collectionManagerSettings', JSON.stringify(settings));
+      
+      const successMsg = document.getElementById('success-message');
+      successMsg.style.display = 'block';
+      setTimeout(() => {
+        successMsg.style.display = 'none';
+      }, 3000);
+    }
+
+    function clearCache() {
+      if (confirm('Are you sure you want to clear the cache? This will remove all cached data.')) {
+        localStorage.clear();
+        alert('Cache cleared successfully!');
+      }
+    }
+
+    function resetSettings() {
+      if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+        localStorage.removeItem('collectionManagerSettings');
+        location.reload();
+      }
+    }
+
+    // Load saved settings
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('collectionManagerSettings');
+      if (saved) {
+        const settings = JSON.parse(saved);
+        document.getElementById('app-name').value = settings.appName || 'Collection Manager';
+        document.getElementById('default-style').value = settings.defaultStyle || 'grid';
+        document.getElementById('auto-sync').checked = settings.autoSync !== false;
+        document.getElementById('real-time-updates').checked = settings.realTimeUpdates !== false;
+        document.getElementById('items-per-page').value = settings.itemsPerPage || 12;
+        document.getElementById('default-columns').value = settings.defaultColumns || 3;
+        document.getElementById('show-images').checked = settings.showImages !== false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -39,25 +39,17 @@ const sections = {
   }
 };
 
-// Navigation handling
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', (e) => {
-    e.preventDefault();
-    const section = e.target.dataset.section;
-    switchSection(section);
-  });
-});
+// Detect current section from URL
+function detectSection() {
+  const path = window.location.pathname;
+  if (path.includes('collection-groups')) return 'collection-groups';
+  if (path.includes('collection-lists')) return 'collection-lists';
+  if (path.includes('collection-types')) return 'collection-types';
+  return 'collections';
+}
 
 function switchSection(section) {
   currentSection = section;
-  
-  // Update active nav
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active');
-    if (item.dataset.section === section) {
-      item.classList.add('active');
-    }
-  });
   
   // Update page title and button
   const config = sections[section];
@@ -307,5 +299,7 @@ if (socket) {
   socket.on('collectionType:deleted', () => { if (currentSection === 'collection-types') loadData('collection-types'); });
 }
 
-// Initial load
-loadData('collections');
+// Initial load - detect section from URL
+const initialSection = detectSection();
+currentSection = initialSection;
+switchSection(initialSection);

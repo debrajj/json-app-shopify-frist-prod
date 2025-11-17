@@ -114,6 +114,15 @@ async function startServer() {
       res.sendFile(join(__dirname, '../public/app.html'));
     });
 
+    // Top navigation pages
+    app.get('/templates', (req, res) => {
+      res.sendFile(join(__dirname, '../public/templates.html'));
+    });
+    
+    app.get('/settings', (req, res) => {
+      res.sendFile(join(__dirname, '../public/settings.html'));
+    });
+
     // Only start server if not in Vercel environment
     if (process.env.VERCEL !== '1') {
       httpServer.listen(PORT, () => {
